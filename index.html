@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>喝了么</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="phone-shell" aria-label="喝了么 APP 首页">
+      <section class="app-screen">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">今晚状态</p>
+            <h1>喝了么</h1>
+          </div>
+          <button class="icon-button" type="button" aria-label="通知">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+              <path d="M13.7 21a2 2 0 0 1-3.4 0"></path>
+            </svg>
+          </button>
+        </header>
+
+        <section class="hero-panel" aria-labelledby="hero-title">
+          <div class="glass-visual" aria-hidden="true">
+            <div class="glass">
+              <span class="bubble bubble-one"></span>
+              <span class="bubble bubble-two"></span>
+              <span class="bubble bubble-three"></span>
+            </div>
+            <div class="shield">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 3 5 6v5c0 4.5 2.9 8.7 7 10 4.1-1.3 7-5.5 7-10V6l-7-3Z"></path>
+                <path d="m9 12 2 2 4-5"></path>
+              </svg>
+            </div>
+          </div>
+          <div class="hero-copy">
+            <p id="statusText" class="status-pill">未打卡</p>
+            <h2 id="hero-title">今晚先记一笔，再给关心的人一个安心。</h2>
+            <p id="lastReport">还没有报平安记录</p>
+          </div>
+        </section>
+
+        <section class="quick-actions" aria-label="快速操作">
+          <button id="checkInBtn" class="action-card primary-action" type="button">
+            <span class="action-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M20 6 9 17l-5-5"></path>
+              </svg>
+            </span>
+            <span>
+              <strong>今日打卡</strong>
+              <small id="checkInHint">记录今晚状态</small>
+            </span>
+          </button>
+          <button id="safeBtn" class="action-card" type="button">
+            <span class="action-icon safe">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 3 5 6v5c0 4.5 2.9 8.7 7 10 4.1-1.3 7-5.5 7-10V6l-7-3Z"></path>
+                <path d="M9 12h6"></path>
+              </svg>
+            </span>
+            <span>
+              <strong>报平安</strong>
+              <small>一键发送状态</small>
+            </span>
+          </button>
+        </section>
+
+        <section class="mood-card" aria-labelledby="mood-title">
+          <div class="section-heading">
+            <h2 id="mood-title">喝酒状态</h2>
+            <span id="moodLabel">清醒</span>
+          </div>
+          <div class="segmented" role="group" aria-label="选择喝酒状态">
+            <button class="segment active" type="button" data-mood="清醒">清醒</button>
+            <button class="segment" type="button" data-mood="微醺">微醺</button>
+            <button class="segment" type="button" data-mood="需要接送">接送</button>
+          </div>
+          <label class="note-field">
+            <span>给自己留一句</span>
+            <textarea id="noteInput" rows="3" placeholder="例如：和同事聚餐，预计 22:30 回家"></textarea>
+          </label>
+        </section>
+
+        <section class="contact-card" aria-labelledby="contact-title">
+          <div class="section-heading">
+            <h2 id="contact-title">平安联系人</h2>
+            <button id="editContactBtn" class="text-button" type="button">编辑</button>
+          </div>
+          <div class="contact-row">
+            <div class="avatar" aria-hidden="true">安</div>
+            <div>
+              <strong id="contactName">安心联系人</strong>
+              <span id="contactPhone">138 0000 0000</span>
+            </div>
+          </div>
+        </section>
+
+        <nav class="tabbar" aria-label="底部导航">
+          <button class="tab active" type="button" aria-label="首页">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="m3 10 9-7 9 7"></path>
+              <path d="M5 10v10h14V10"></path>
+            </svg>
+            <span>首页</span>
+          </button>
+          <button class="tab" type="button" aria-label="记录">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M8 2v4"></path>
+              <path d="M16 2v4"></path>
+              <path d="M3 10h18"></path>
+              <path d="M5 4h14a2 2 0 0 1 2 2v14H3V6a2 2 0 0 1 2-2Z"></path>
+            </svg>
+            <span>记录</span>
+          </button>
+          <button class="tab" type="button" aria-label="我的">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 21a8 8 0 0 0-16 0"></path>
+              <path d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"></path>
+            </svg>
+            <span>我的</span>
+          </button>
+        </nav>
+      </section>
+    </main>
+
+    <dialog id="safeDialog" class="dialog">
+      <form method="dialog" class="dialog-card">
+        <button class="icon-button close-button" value="cancel" aria-label="关闭">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+          </svg>
+        </button>
+        <p class="eyebrow">平安消息</p>
+        <h2>已准备好发送</h2>
+        <p id="safeMessage" class="message-preview"></p>
+        <menu class="dialog-actions">
+          <button value="cancel" class="secondary-button">稍后</button>
+          <button id="confirmSafeBtn" value="default" class="confirm-button">确认报平安</button>
+        </menu>
+      </form>
+    </dialog>
+
+    <dialog id="contactDialog" class="dialog">
+      <form method="dialog" class="dialog-card">
+        <button class="icon-button close-button" value="cancel" aria-label="关闭">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M18 6 6 18"></path>
+            <path d="m6 6 12 12"></path>
+          </svg>
+        </button>
+        <p class="eyebrow">联系人</p>
+        <h2>编辑平安联系人</h2>
+        <label class="input-field">
+          <span>姓名</span>
+          <input id="contactNameInput" type="text" autocomplete="name">
+        </label>
+        <label class="input-field">
+          <span>电话</span>
+          <input id="contactPhoneInput" type="tel" autocomplete="tel">
+        </label>
+        <menu class="dialog-actions">
+          <button value="cancel" class="secondary-button">取消</button>
+          <button id="saveContactBtn" value="default" class="confirm-button">保存</button>
+        </menu>
+      </form>
+    </dialog>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
