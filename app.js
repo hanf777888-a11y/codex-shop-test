@@ -4,6 +4,8 @@ const defaultState = {
   checkedInAt: "",
   mood: "清醒",
   note: "",
+  photoData: "",
+  photoTakenAt: "",
   lastReportAt: "",
   contactName: "安心联系人",
   contactPhone: "138 0000 0000"
@@ -20,6 +22,13 @@ const checkInHint = document.querySelector("#checkInHint");
 const lastReport = document.querySelector("#lastReport");
 const moodLabel = document.querySelector("#moodLabel");
 const noteInput = document.querySelector("#noteInput");
+const photoBtn = document.querySelector("#photoBtn");
+const photoInput = document.querySelector("#photoInput");
+const photoStatus = document.querySelector("#photoStatus");
+const photoPreview = document.querySelector("#photoPreview");
+const photoImage = document.querySelector("#photoImage");
+const photoTime = document.querySelector("#photoTime");
+const removePhotoBtn = document.querySelector("#removePhotoBtn");
 const safeDialog = document.querySelector("#safeDialog");
 const contactDialog = document.querySelector("#contactDialog");
 const safeMessage = document.querySelector("#safeMessage");
@@ -38,7 +47,7 @@ checkInBtn.addEventListener("click", () => {
   state.note = noteInput.value.trim();
   saveState();
   render();
-  showToast("今日已打卡");
+  showToast(state.photoData ? "已完成拍照打卡" : "今日已打卡");
 });
 
 safeBtn.addEventListener("click", () => {
@@ -91,6 +100,48 @@ moodButtons.forEach((button) => {
   });
 });
 
+photoBtn.addEventListener("click", () => {
+  photoInput.click();
+});
+
+photoInput.addEventListener("change", async () => {
+  const [file] = photoInput.files;
+
+  if (!file) {
+    return;
+  }
+
+  if (!file.type.startsWith("image/")) {
+    showToast("请选择图片");
+    photoInput.value = "";
+    return;
+  }
+
+  try {
+    state.photoData = await compressImage(file);
+    state.photoTakenAt = new Date().toISOString();
+    state.checkedInAt = state.photoTakenAt;
+    state.note = noteInput.value.trim();
+    saveState();
+    render();
+    showToast("已完成拍照打卡");
+  } catch {
+    state.photoData = "";
+    state.photoTakenAt = "";
+    showToast("照片保存失败");
+  } finally {
+    photoInput.value = "";
+  }
+});
+
+removePhotoBtn.addEventListener("click", () => {
+  state.photoData = "";
+  state.photoTakenAt = "";
+  saveState();
+  render();
+  showToast("照片已移除");
+});
+
 function loadState() {
   try {
     const saved = JSON.parse(localStorage.getItem(stateKey));
@@ -110,6 +161,18 @@ function render() {
   checkInHint.textContent = checkedInToday ? formatTime(state.checkedInAt) : "记录今晚状态";
   moodLabel.textContent = state.mood;
   noteInput.value = state.note;
+  photoStatus.textContent = state.photoData ? "已拍照" : "未拍照";
+  photoPreview.hidden = !state.photoData;
+  photoBtn.querySelector("strong").textContent = state.photoData ? "重新拍照" : "拍照打卡";
+
+  if (state.photoData) {
+    photoImage.src = state.photoData;
+    photoTime.textContent = state.photoTakenAt ? formatDateTime(state.photoTakenAt) : "已添加";
+  } else {
+    photoImage.removeAttribute("src");
+    photoTime.textContent = "刚刚添加";
+  }
+
   contactName.textContent = state.contactName;
   contactPhone.textContent = state.contactPhone;
   lastReport.textContent = state.lastReportAt
@@ -123,7 +186,36 @@ function render() {
 
 function buildSafeMessage() {
   const note = state.note ? `备注：${state.note}` : "备注：暂无额外说明";
-  return `发给 ${state.contactName}：我现在是“${state.mood}”状态，已完成今晚打卡。${note}。`;
+  const photo = state.photoData ? "已完成拍照打卡记录" : "暂无拍照记录";
+  return `发给 ${state.contactName}：我现在是“${state.mood}”状态，已完成今晚打卡，${photo}。${note}。`;
+}
+
+function compressImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.addEventListener("load", () => {
+      const image = new Image();
+
+      image.addEventListener("load", () => {
+        const maxSize = 1200;
+        const ratio = Math.min(1, maxSize / Math.max(image.width, image.height));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.round(image.width * ratio);
+        canvas.height = Math.round(image.height * ratio);
+
+        const context = canvas.getContext("2d");
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL("image/jpeg", 0.78));
+      });
+
+      image.addEventListener("error", reject);
+      image.src = reader.result;
+    });
+
+    reader.addEventListener("error", reject);
+    reader.readAsDataURL(file);
+  });
 }
 
 function isToday(value) {
